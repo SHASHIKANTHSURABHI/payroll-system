@@ -4,11 +4,15 @@ from django.http import HttpResponse
 from reportlab.pdfgen import canvas
 from .models import Employee
 from .serializers import EmployeeSerializer
+from django.views.generic import View
 
 # 1. API ViewSet for frontend (React)
 class EmployeeViewSet(viewsets.ModelViewSet):
     queryset = Employee.objects.all()
     serializer_class = EmployeeSerializer
+class IndexView(View):
+    def get(self, request, *args, **kwargs):
+        return render(request, 'index.html')
 
 # 2. Payslip HTML View
 def payslip_view(request, pk):
