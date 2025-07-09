@@ -116,7 +116,7 @@ REST_FRAMEWORK = {
 
 
 # Static files (CSS, JavaScript, Images)
-STATIC_URL = 'static/'
+STATIC_URL = '/static/'
 
 STATICFILES_DIRS = [
     os.path.join(BASE_DIR, 'payroll/frontend/build/static'),  # ✅ React static files
