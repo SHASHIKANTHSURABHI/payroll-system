@@ -12,6 +12,7 @@ from rest_framework.authtoken.serializers import AuthTokenSerializer
 from rest_framework.authentication import BasicAuthentication
 from rest_framework.permissions import AllowAny
 from rest_framework.views import APIView
+from rest_framework import status
 
 
 from .models import Employee
@@ -61,14 +62,21 @@ def download_payslip_pdf(request, pk):
 
 # 5. ✅ CSRF-exempt Custom Auth Token View for React Login
 @method_decorator(csrf_exempt, name='dispatch')
-class CustomAuthToken(ObtainAuthToken):
+class CustomAuthToken(APIView):
+    authentication_classes = []  # No auth required to access login
+    permission_classes = []      # No permissions required
+
     def post(self, request, *args, **kwargs):
-        serializer = self.serializer_class(data=request.data, context={'request': request})
-        serializer.is_valid(raise_exception=True)
-        user = serializer.validated_data['user']
-        token, created = Token.objects.get_or_create(user=user)
-        return Response({
-            'token': token.key,
-            'user_id': user.id,
-            'username': user.username
-        })
+        username = request.data.get('username')
+        password = request.data.get('password')
+
+        user = authenticate(username=username, password=password)
+        if user is not None:
+            token, created = Token.objects.get_or_create(user=user)
+            return Response({
+                'token': token.key,
+                'user_id': user.id,
+                'username': user.username
+            })
+        else:
+            return Response({'detail': 'Invalid credentials'}, status=status.HTTP_401_UNAUTHORIZED)
