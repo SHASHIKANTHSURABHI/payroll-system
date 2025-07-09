@@ -26,7 +26,7 @@ SECRET_KEY = 'django-insecure-ndc1(o8+y4t4%r2d%qsxhvw9jr%e1e=g&nx4zwxy!iji=i_lcf
 
 DEBUG = False
 
-ALLOWED_HOSTS = ['127.0.0.1','payroll.onrender.com']
+ALLOWED_HOSTS = ['127.0.0.1','.onrender.com']
 
 
 # Application definition
