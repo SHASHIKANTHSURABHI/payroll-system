@@ -6,8 +6,8 @@ const api = axios.create({
     : 'http://127.0.0.1:8000/api/',
   headers: {
     'Content-Type': 'application/json',
-  },
-  withCredentials: true, // 🔥 CRITICAL: allow cookies to be sent with requests
+  }
+   // 🔥 CRITICAL: allow cookies to be sent with requests
 });
 
 export default api;

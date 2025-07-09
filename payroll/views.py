@@ -63,8 +63,8 @@ def download_payslip_pdf(request, pk):
 # 5. ✅ CSRF-exempt Custom Auth Token View for React Login
 @method_decorator(csrf_exempt, name='dispatch')
 class CustomAuthToken(APIView):
-    authentication_classes = []  # No auth required to access login
-    permission_classes = []      # No permissions required
+    authentication_classes = []
+    permission_classes = []
 
     def post(self, request, *args, **kwargs):
         username = request.data.get('username')
@@ -72,11 +72,10 @@ class CustomAuthToken(APIView):
 
         user = authenticate(username=username, password=password)
         if user is not None:
-            token, created = Token.objects.get_or_create(user=user)
+            token, _ = Token.objects.get_or_create(user=user)
             return Response({
                 'token': token.key,
                 'user_id': user.id,
-                'username': user.username
+                'username': user.username,
             })
-        else:
-            return Response({'detail': 'Invalid credentials'}, status=status.HTTP_401_UNAUTHORIZED)
+        return Response({'error': 'Invalid credentials'}, status=status.HTTP_401_UNAUTHORIZED)
