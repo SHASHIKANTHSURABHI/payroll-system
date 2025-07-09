@@ -6,7 +6,7 @@ from .views import (
     download_payslip_pdf,
     IndexView,  # ✅ Correctly imported once
 )
-from .views import custom_auth_token  
+from .views import CustomAuthToken  
 
 router = DefaultRouter()
 router.register('employees', EmployeeViewSet)
@@ -16,7 +16,7 @@ urlpatterns = [
     path('api/payslip/<int:pk>/', payslip_view, name='payslip_view'),
     path('api/payslip/<int:pk>/pdf/', download_payslip_pdf, name='download_payslip_pdf'),
 
-    path('api/token/', custom_auth_token),  # ✅ Your custom login view
+    path('api/token/', CustomAuthToken.as_view()),  # ✅ Your custom login view
 
     # ✅ Catch-all route for React frontend — ignores any /api/ paths
     re_path(r'^(?!api/).*$', IndexView.as_view(), name='index'),
