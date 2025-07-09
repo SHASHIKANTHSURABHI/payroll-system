@@ -1,4 +1,10 @@
 from rest_framework import viewsets
+from rest_framework.authtoken.views import ObtainAuthToken
+from rest_framework.authtoken.models import Token
+from rest_framework.response import Response
+from django.views.decorators.csrf import csrf_exempt
+from django.utils.decorators import method_decorator
+
 from django.shortcuts import render, get_object_or_404
 from django.http import HttpResponse
 from reportlab.pdfgen import canvas
@@ -10,11 +16,13 @@ from django.views.generic import View
 class EmployeeViewSet(viewsets.ModelViewSet):
     queryset = Employee.objects.all()
     serializer_class = EmployeeSerializer
+
+# 2. Index view for React frontend routing
 class IndexView(View):
     def get(self, request, *args, **kwargs):
         return render(request, 'index.html')
 
-# 2. Payslip HTML View
+# 3. Payslip HTML View
 def payslip_view(request, pk):
     employee = get_object_or_404(Employee, pk=pk)
     net_salary = employee.basic_salary + employee.allowance - employee.deductions
@@ -23,7 +31,7 @@ def payslip_view(request, pk):
         'net_salary': net_salary
     })
 
-# 3. PDF Download View
+# 4. PDF Download View
 def download_payslip_pdf(request, pk):
     employee = get_object_or_404(Employee, pk=pk)
     net_salary = employee.basic_salary + employee.allowance - employee.deductions
@@ -47,3 +55,15 @@ def download_payslip_pdf(request, pk):
     p.showPage()
     p.save()
     return response
+
+# 5. ✅ CSRF-exempt Custom Auth Token View for React Login
+@method_decorator(csrf_exempt, name='dispatch')
+class CustomAuthToken(ObtainAuthToken):
+    def post(self, request, *args, **kwargs):
+        response = super().post(request, *args, **kwargs)
+        token = Token.objects.get(key=response.data['token'])
+        return Response({
+            'token': token.key,
+            'user_id': token.user_id,
+            'username': token.user.username
+        })
