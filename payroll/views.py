@@ -11,7 +11,8 @@ from reportlab.pdfgen import canvas
 from rest_framework.authtoken.serializers import AuthTokenSerializer
 from rest_framework.authentication import BasicAuthentication
 from rest_framework.permissions import AllowAny
-from rest_framework.decorators import api_view
+from rest_framework.views import APIView
+
 
 from .models import Employee
 from .serializers import EmployeeSerializer
