@@ -8,6 +8,8 @@ from django.views.generic import View
 from django.shortcuts import render, get_object_or_404
 from django.http import HttpResponse
 from reportlab.pdfgen import canvas
+from rest_framework.authtoken.serializers import AuthTokenSerializer
+from rest_framework.decorators import api_view
 
 from .models import Employee
 from .serializers import EmployeeSerializer
@@ -55,18 +57,15 @@ def download_payslip_pdf(request, pk):
     return response
 
 # 5. ✅ CSRF-exempt Custom Auth Token View for React Login
-@method_decorator(csrf_exempt, name='dispatch')
-class CustomAuthToken(ObtainAuthToken):
-    def dispatch(self, *args, **kwargs):
-        return super().dispatch(*args, **kwargs)
-
-    def post(self, request, *args, **kwargs):
-        serializer = self.serializer_class(data=request.data, context={'request': request})
-        serializer.is_valid(raise_exception=True)
-        user = serializer.validated_data['user']
-        token, created = Token.objects.get_or_create(user=user)
-        return Response({
-            'token': token.key,
-            'user_id': user.id,
-            'username': user.username
-        })
+@csrf_exempt
+@api_view(['POST'])
+def custom_auth_token(request):
+    serializer = AuthTokenSerializer(data=request.data, context={'request': request})
+    serializer.is_valid(raise_exception=True)
+    user = serializer.validated_data['user']
+    token, created = Token.objects.get_or_create(user=user)
+    return Response({
+        'token': token.key,
+        'user_id': user.id,
+        'username': user.username
+    })
