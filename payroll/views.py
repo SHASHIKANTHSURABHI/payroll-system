@@ -4,13 +4,13 @@ from rest_framework.authtoken.models import Token
 from rest_framework.response import Response
 from django.views.decorators.csrf import csrf_exempt
 from django.utils.decorators import method_decorator
-
+from django.views.generic import View
 from django.shortcuts import render, get_object_or_404
 from django.http import HttpResponse
 from reportlab.pdfgen import canvas
+
 from .models import Employee
 from .serializers import EmployeeSerializer
-from django.views.generic import View
 
 # 1. API ViewSet for frontend (React)
 class EmployeeViewSet(viewsets.ModelViewSet):
@@ -36,11 +36,9 @@ def download_payslip_pdf(request, pk):
     employee = get_object_or_404(Employee, pk=pk)
     net_salary = employee.basic_salary + employee.allowance - employee.deductions
 
-    # Prepare PDF response
     response = HttpResponse(content_type='application/pdf')
     response['Content-Disposition'] = f'attachment; filename="payslip_{employee.name}.pdf"'
 
-    # Create PDF
     p = canvas.Canvas(response)
     p.setFont("Helvetica-Bold", 16)
     p.drawString(100, 800, f"Payslip for {employee.name}")
@@ -60,10 +58,12 @@ def download_payslip_pdf(request, pk):
 @method_decorator(csrf_exempt, name='dispatch')
 class CustomAuthToken(ObtainAuthToken):
     def post(self, request, *args, **kwargs):
-        response = super().post(request, *args, **kwargs)
-        token = Token.objects.get(key=response.data['token'])
+        serializer = self.serializer_class(data=request.data, context={'request': request})
+        serializer.is_valid(raise_exception=True)
+        user = serializer.validated_data['user']
+        token, created = Token.objects.get_or_create(user=user)
         return Response({
             'token': token.key,
-            'user_id': token.user_id,
-            'username': token.user.username
+            'user_id': user.id,
+            'username': user.username
         })
