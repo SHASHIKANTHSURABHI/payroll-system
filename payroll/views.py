@@ -60,18 +60,13 @@ def download_payslip_pdf(request, pk):
     return response
 
 # 5. ✅ CSRF-exempt Custom Auth Token View for React Login
-class CustomAuthToken(APIView):
-    authentication_classes = [BasicAuthentication]  # ⛔ No SessionAuthentication
-    permission_classes = [AllowAny]  # ⛔ Allow public access
-
+@method_decorator(csrf_exempt, name='dispatch')
+class CustomAuthToken(ObtainAuthToken):
     def post(self, request, *args, **kwargs):
-        from rest_framework.authtoken.serializers import AuthTokenSerializer
-        serializer = AuthTokenSerializer(data=request.data, context={'request': request})
-        serializer.is_valid(raise_exception=True)
-        user = serializer.validated_data['user']
-        token, _ = Token.objects.get_or_create(user=user)
+        response = super().post(request, *args, **kwargs)
+        token = Token.objects.get(key=response.data['token'])
         return Response({
             'token': token.key,
-            'user_id': user.id,
-            'username': user.username
+            'user_id': token.user_id,
+            'username': token.user.username
         })
