@@ -9,12 +9,12 @@ venv/
 db.sqlite3
 
 # Django
-/staticfiles/
+
 media/
 
 # React
 node_modules/
-build/
+
 frontend/node_modules/
 frontend/build/
 
