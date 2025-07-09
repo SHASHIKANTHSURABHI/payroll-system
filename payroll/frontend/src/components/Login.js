@@ -16,7 +16,8 @@ function Login({ onLogin }) {
         password,
       });
 
-      localStorage.setItem('token', response.data.access); // Save JWT token
+      localStorage.setItem('token', response.data.token);
+// Save JWT token
       onLogin(); // Notify App of successful login
       navigate('/'); // ✅ Redirect to homepage (Employee Manager)
     } catch (err) {
