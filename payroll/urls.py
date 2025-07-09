@@ -19,5 +19,5 @@ urlpatterns = [
     path('api/token/', CustomAuthToken.as_view(), name='api_token_auth'),  # ✅ Updated
 
     # Catch-all for React frontend
-    re_path(r'^.*$', IndexView.as_view(), name='index'),
+    re_path(r'^(?!api/).*$', IndexView.as_view(), name='index'),  # Only catch non-API paths
 ]
