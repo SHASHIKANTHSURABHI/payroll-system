@@ -1,0 +1,56 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="UTF-8">
+    <title>Payslip</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            padding: 40px;
+            line-height: 1.6;
+        }
+        .payslip {
+            border: 1px solid #333;
+            padding: 20px;
+        }
+        .title {
+            text-align: center;
+            font-size: 22px;
+            font-weight: bold;
+        }
+        .section {
+            margin-top: 20px;
+        }
+        .section h3 {
+            margin-bottom: 10px;
+            border-bottom: 1px solid #ccc;
+        }
+        .field {
+            margin-bottom: 5px;
+        }
+    </style>
+</head>
+<body>
+    <div class="payslip">
+        <div class="title">Employee Payslip</div>
+        
+        <div class="section">
+            <h3>Employee Information</h3>
+            <div class="field"><strong>Name:</strong> {{ employee.name }}</div>
+            <div class="field"><strong>Role:</strong> {{ employee.role }}</div>
+        </div>
+
+        <div class="section">
+            <h3>Salary Details</h3>
+            <div class="field"><strong>Basic Salary:</strong> ₹{{ employee.basic_salary }}</div>
+            <div class="field"><strong>Allowance:</strong> ₹{{ employee.allowance }}</div>
+            <div class="field"><strong>Deductions:</strong> ₹{{ employee.deductions }}</div>
+            <div class="field"><strong>Net Salary:</strong> ₹{{ employee.basic_salary|add:employee.allowance|floatformat:2|add:-employee.deductions }}</div>
+        </div>
+
+        <div class="section" style="margin-top: 40px;">
+            <div><strong>Date Issued:</strong> {{ now|date:"d M Y" }}</div>
+        </div>
+    </div>
+</body>
+</html>

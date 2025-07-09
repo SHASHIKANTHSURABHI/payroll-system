@@ -1,0 +1,19 @@
+services:
+  - type: web
+    name: payroll-app
+    env: python
+    buildCommand: "./build.sh"
+    startCommand: "gunicorn payroll_project.wsgi:application"
+    envVars:
+      - key: DJANGO_SETTINGS_MODULE
+        value: payroll_project.settings
+      - key: DATABASE_URL
+        fromDatabase:
+          name: payroll-db
+          property: connectionString
+    autoDeploy: true
+
+databases:
+  - name: payroll-db
+    databaseName: payroll_system
+    user: root
