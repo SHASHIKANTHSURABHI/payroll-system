@@ -6,20 +6,16 @@ function Login({ onLogin }) {
   const [username, setUsername] = useState('');
   const [password, setPassword] = useState('');
   const [error, setError] = useState('');
-  const navigate = useNavigate(); // ✅ for redirect
+  const navigate = useNavigate();
 
   const handleSubmit = async (e) => {
     e.preventDefault();
     try {
-      const response = await api.post('token/', {
-        username,
-        password,
-      });
+      const response = await api.post('token/', { username, password });
 
-      localStorage.setItem('token', response.data.token);
-
-      onLogin(); // Notify App of successful login
-      navigate('/'); // ✅ Redirect to homepage (Employee Manager)
+      localStorage.setItem('token', response.data.access); // ✅ Save JWT
+      onLogin();
+      navigate('/');
     } catch (err) {
       setError('Invalid credentials');
     }
