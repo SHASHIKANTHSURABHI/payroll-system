@@ -14,13 +14,20 @@ Including another URLconf
     1. Import the include() function: from django.urls import include, path
     2. Add a URL to urlpatterns:  path('blog/', include('blog.urls'))
 """
+# payroll_project/urls.py
+
 from django.contrib import admin
 from django.urls import path, include, re_path
 from django.views.generic import TemplateView
 
 urlpatterns = [
     path('admin/', admin.site.urls),
-    path('api/', include('payroll.urls')),  # your API routes
-    re_path(r'^.*$', TemplateView.as_view(template_name='index.html')),  # catch-all to serve React
+    path('api/', include('payroll.urls')),  # All API routes from payroll app
 ]
+
+# ✅ Catch-all route to serve React app (frontend)
+urlpatterns += [
+    re_path(r'^.*$', TemplateView.as_view(template_name='index.html')),
+]
+
 
